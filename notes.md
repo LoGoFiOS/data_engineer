@@ -405,7 +405,9 @@ docker start pgadmin
 To run via Docker:
 
 ```bash
-docker run -it taxi_ingest:v001 \
+docker run -it \
+    --network=pg-network \
+    taxi_ingest:v001 \
     --user=root \
     --password=root \
     --host=pg-database \
@@ -418,3 +420,83 @@ docker run -it taxi_ingest:v001 \
 Be careful with host parameter. There is have to be name of the Docker Postgres container!
 
 ## Docker-compose
+
+Instead, to run a few Docker containers, we can run Docker Compose file:
+
+```dockerfile
+services:
+  pgdatabase:
+    image: postgres:16.2
+    environment:
+      - POSTGRES_USER=root
+      - POSTGRES_PASSWORD=root
+      - POSTGRES_DB=ny_taxi
+    volumes:
+      - "./../../postgresql/ny_taxi_data:/var/lib/postgresql/data:rw"
+    ports:
+      - "5432:5432"
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=admin@admin.com
+      - PGADMIN_DEFAULT_PASSWORD=root
+    ports:
+      - "8080:80"
+```
+
+We don't have to think about networking. Docker Compose creates it for us.
+
+```bash
+docker-compose up -d
+```
+
+There is a `-d` parameter which means that the terminal will be available after the run. To stop use `docker-compose down` (or ctr + c if use without -d!).
+
+Also there can be a some problems:
+
+* cannot stop container ... permission denied:
+  To solve it run `sudo systemctl restart docker.socket docker.service`
+* PORT_NUMBER bind: address already in use
+  To solve it run ```sudo kill -9 `sudo lsof -t -i:PORT_NUMBER````
+
+After run we can use athe previous code to ingest the data:
+
+```bash
+docker build -t taxi_ingest:v001 .
+```
+
+To find a Docker Compose Network:
+
+```bash
+docker network ls
+```
+
+In my case it was `third_pipeline_default`. And host will be the name from Docker Compose file:
+
+```bash
+docker run -it \
+    --network=third_pipeline_default \
+    taxi_ingest:v001 \
+    --user=root \
+    --password=root \
+    --host=pgdatabase \
+    --port=5432 \
+    --db=ny_taxi \
+    --table_name=yellow_tripdata \
+    --url="https://github.com/DataTalksClub/nyc-tlc-data/releases/download/yellow/yellow_tripdata_2021-01.csv.gz"
+```
+
+And a note about ports. I can use another ports. For wxample, let's use "5431:5432" for pgdatabase. To accept this database I have to use port 5431:  `pgcli -h localhost -p 5431 -u root -d ny_taxi`
+
+But inside the Docker Compose I'll be use a port 5432:
+
+![](/home/logofios/snap/marktext/9/.config/marktext/images/2024-05-06-21-04-35-image.png)
+
+And there is a good video about ports: [click](https://www.youtube.com/watch?v=tOr4hTsHOzU&list=PL3MmuxUbc_hJed7dXYoJw8DoCuVHhGEQb&index=16)
+
+## Terraform
+
+Infrastructure as code
+[video 1](https://www.youtube.com/watch?v=s2bOYDCKl_M&list=PL3MmuxUbc_hJed7dXYoJw8DoCuVHhGEQb&index=12)
+[video 2](https://www.youtube.com/watch?v=Y2ux7gq3Z0o&list=PL3MmuxUbc_hJed7dXYoJw8DoCuVHhGEQb&index=12)
+[video 3](https://www.youtube.com/watch?v=PBi0hHjLftk&list=PL3MmuxUbc_hJed7dXYoJw8DoCuVHhGEQb&index=13)
