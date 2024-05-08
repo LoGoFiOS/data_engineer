@@ -1,0 +1,26 @@
+services:
+  pgdatabase:
+    image: postgres:16.2
+    environment:
+      - POSTGRES_USER=root
+      - POSTGRES_PASSWORD=root
+      - POSTGRES_DB=ny_taxi
+    volumes:
+      - "./../../postgresql/ny_taxi_data:/var/lib/postgresql/data:rw"
+    ports:
+      - "5431:5432"
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=admin@admin.com
+      - PGADMIN_DEFAULT_PASSWORD=root
+    ports:
+      - "8080:80"
+
+
+#cannot stop container ... permission denied:
+# sudo systemctl restart docker.socket docker.service
+
+
+# PORT_NUMBER bind: address already in use
+# sudo kill -9 `sudo lsof -t -i:PORT_NUMBER`

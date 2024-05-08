@@ -500,3 +500,21 @@ Infrastructure as code
 [video 1](https://www.youtube.com/watch?v=s2bOYDCKl_M&list=PL3MmuxUbc_hJed7dXYoJw8DoCuVHhGEQb&index=12)
 [video 2](https://www.youtube.com/watch?v=Y2ux7gq3Z0o&list=PL3MmuxUbc_hJed7dXYoJw8DoCuVHhGEQb&index=12)
 [video 3](https://www.youtube.com/watch?v=PBi0hHjLftk&list=PL3MmuxUbc_hJed7dXYoJw8DoCuVHhGEQb&index=13)
+
+## Connect to Goocle SSH via a terminal
+
+[A good video](https://www.youtube.com/watch?v=ae-CV2KfoN0&list=PL3MmuxUbc_hJed7dXYoJw8DoCuVHhGEQb&index=14)
+
+1. Create a ssh key: [link](https://cloud.google.com/compute/docs/connect/create-ssh-keys)
+2. Add the ssh key to VM compute engine metadata
+3. To connect `ssh -i ~/.ssh/NAME_OF_FILE_WITH_SSH_KEY YOUR_LOGIN@IP_OF_VM`
+4. Also you can create a config file in the ~/.ssh directory:
+
+```bash
+Host de-zoomcamp
+    HostName IP_OF_VM
+    User YOUR_LOGIN
+    IdentityFile ~/.ssh/gcp
+```
+
+In my case NAME_OF_FILE_WITH_SSH_KEY is `gcp`. Now you can connect by `ssh de-zoomcamp`
