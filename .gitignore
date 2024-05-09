@@ -1,2 +1,6 @@
 postgresql/
 *.csv
+terraform/
+terraform.*
+.terraform*
+.terraform.*

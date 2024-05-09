@@ -34,30 +34,30 @@ def main(params):
     df_iter = pd.read_csv(f'{csv_name}', compression='gzip', low_memory=False, iterator=True, chunksize=100_000)
 
     # Process the first chunk separately to create/replace the table structure
-    # t_start = time()
-    # try:
-    #     df = next(df_iter)
-    #     df['tpep_pickup_datetime'] = pd.to_datetime(df['tpep_pickup_datetime'])
-    #     df['tpep_dropoff_datetime'] = pd.to_datetime(df['tpep_dropoff_datetime'])
-    #     df.head(0).to_sql(name=table_name, con=engine, if_exists='replace')
-    #     df.to_sql(name=table_name, con=engine, if_exists='append')
-    #     t_end = time()
-    #     print(f"Inserted first chunk..., took {t_end-t_start:.2f} seconds")
-    # except StopIteration:
-    #     print('No data to process.')
+    t_start = time()
+    try:
+        df = next(df_iter)
+        df['tpep_pickup_datetime'] = pd.to_datetime(df['tpep_pickup_datetime'])
+        df['tpep_dropoff_datetime'] = pd.to_datetime(df['tpep_dropoff_datetime'])
+        df.head(0).to_sql(name=table_name, con=engine, if_exists='replace')
+        df.to_sql(name=table_name, con=engine, if_exists='append')
+        t_end = time()
+        print(f"Inserted first chunk..., took {t_end-t_start:.2f} seconds")
+    except StopIteration:
+        print('No data to process.')
 
-    # while True:
-    #     t_start = time()
-    #     try:
-    #         df = next(df_iter)
-    #         df['tpep_pickup_datetime'] = pd.to_datetime(df['tpep_pickup_datetime'])
-    #         df['tpep_dropoff_datetime'] = pd.to_datetime(df['tpep_dropoff_datetime'])
-    #         df.to_sql(name=table_name, con=engine, if_exists='append')
-    #         t_end = time()
-    #         print(f"Inserted chunk..., took {t_end-t_start:.2f} seconds")
-    #     except StopIteration:
-    #         print('Finished processing all chunks.')
-    #         break
+    while True:
+        t_start = time()
+        try:
+            df = next(df_iter)
+            df['tpep_pickup_datetime'] = pd.to_datetime(df['tpep_pickup_datetime'])
+            df['tpep_dropoff_datetime'] = pd.to_datetime(df['tpep_dropoff_datetime'])
+            df.to_sql(name=table_name, con=engine, if_exists='append')
+            t_end = time()
+            print(f"Inserted chunk..., took {t_end-t_start:.2f} seconds")
+        except StopIteration:
+            print('Finished processing all chunks.')
+            break
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Ingest CSV data to Postgres')

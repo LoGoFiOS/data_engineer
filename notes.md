@@ -92,6 +92,7 @@ Install a client to access to Postgres:
 
 ```bash
 pip install pgcli
+sudo apt install pgcli
 ```
 
 Then run (execute `pgcli`) pgcli and if you have these errors:
@@ -124,15 +125,15 @@ docker run -it \
 
 `ny_taxi_data` will be the name of the database. And be careful with the Postgres path in the Docker. The correct path should be: `/var/lib/postgresql/data`!
 
-## Acces to Postgres via terminal
+## Access to Postgres via terminal
 
-To acces to the `ny_taxi_data` database:
+To access to the `ny_taxi_data` database:
 
 ```bash
 pgcli -h localhost -p 5432 -u root -d ny_taxi
 ```
 
-## Acces to Postgres via Jupyther
+## Access to Postgres via Jupyther
 
 Here is a data: https://github.com/DataTalksClub/nyc-tlc-data/releases/tag/yellow
 
@@ -217,7 +218,7 @@ pd.read_sql(query, con=engine)
 
 If you get the error: `No module named 'psycopg2'`, run `pip install psycopg2-binary`.
 
-To convert jupyther notebook to sctipt:
+To convert jupyther notebook to script:
 
 ```bash
 jupyter nbconvert --to=script %NOTEBOOK_TO_CONVERT%
@@ -225,7 +226,7 @@ jupyter nbconvert --to=script %NOTEBOOK_TO_CONVERT%
 
 ## pgAdmin
 
-It's a tool to acces to database via web browser:
+It's a tool to access to database via web browser:
 
 ```bash
 docker run -it \
@@ -419,7 +420,7 @@ docker run -it \
 
 Be careful with host parameter. There is have to be name of the Docker Postgres container!
 
-## Docker-compose
+## Docker compose
 
 Instead, to run a few Docker containers, we can run Docker Compose file:
 
@@ -444,13 +445,15 @@ services:
       - "8080:80"
 ```
 
+To install [click](https://docs.docker.com/compose/install/linux/#install-using-the-repository).
+
 We don't have to think about networking. Docker Compose creates it for us.
 
 ```bash
-docker-compose up -d
+docker compose up -d
 ```
 
-There is a `-d` parameter which means that the terminal will be available after the run. To stop use `docker-compose down` (or ctr + c if use without -d!).
+There is a `-d` parameter which means that the terminal will be available after the run. To stop use `docker compose down` (or ctr + c if use without -d!).
 
 Also there can be a some problems:
 
@@ -459,7 +462,7 @@ Also there can be a some problems:
 * PORT_NUMBER bind: address already in use
   To solve it run ```sudo kill -9 `sudo lsof -t -i:PORT_NUMBER````
 
-After run we can use athe previous code to ingest the data:
+After run we can use the previous code to ingest the data:
 
 ```bash
 docker build -t taxi_ingest:v001 .
@@ -486,7 +489,7 @@ docker run -it \
     --url="https://github.com/DataTalksClub/nyc-tlc-data/releases/download/yellow/yellow_tripdata_2021-01.csv.gz"
 ```
 
-And a note about ports. I can use another ports. For wxample, let's use "5431:5432" for pgdatabase. To accept this database I have to use port 5431:  `pgcli -h localhost -p 5431 -u root -d ny_taxi`
+And a note about ports. I can use another ports. For example, let's use "5431:5432" for pgdatabase. To accept this database I have to use port 5431:  `pgcli -h localhost -p 5431 -u root -d ny_taxi`
 
 But inside the Docker Compose I'll be use a port 5432:
 
@@ -501,7 +504,9 @@ Infrastructure as code
 [video 2](https://www.youtube.com/watch?v=Y2ux7gq3Z0o&list=PL3MmuxUbc_hJed7dXYoJw8DoCuVHhGEQb&index=12)
 [video 3](https://www.youtube.com/watch?v=PBi0hHjLftk&list=PL3MmuxUbc_hJed7dXYoJw8DoCuVHhGEQb&index=13)
 
-## Connect to Goocle SSH via a terminal
+[Install](https://developer.hashicorp.com/terraform/tutorials/aws-get-started/install-cli).
+
+## Connect to Google CP via terminal
 
 [A good video](https://www.youtube.com/watch?v=ae-CV2KfoN0&list=PL3MmuxUbc_hJed7dXYoJw8DoCuVHhGEQb&index=14)
 
@@ -518,3 +523,15 @@ Host de-zoomcamp
 ```
 
 In my case NAME_OF_FILE_WITH_SSH_KEY is `gcp`. Now you can connect by `ssh de-zoomcamp`
+
+And it easy to send files from localhost to GCP:
+
+```bash
+scp hello.txt de-zoomcamp:~/tmp
+```
+
+Or from GCP to localhost:
+
+```bash
+scp de-zoomcamp:~/tmp/hello.txt ~/tmp
+```
